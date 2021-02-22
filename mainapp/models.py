@@ -99,3 +99,5 @@ class Smartphone(Product):
 
     def __str__(self):
         return "{}: {}".format(self.category.name, self.title)
+
+
