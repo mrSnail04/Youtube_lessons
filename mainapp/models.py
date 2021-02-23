@@ -14,6 +14,36 @@ User = get_user_model()
 
 #6 Customer
 
+#класс позволяющий выводить на главную страницу последнюю добавленную технику
+class LatestProductsManager:
+    #функция достающая весь список товаров, который надо отобразить
+    @staticmethod
+    def get_products_for_main_page(*args, **kwargs):
+        with_respect_to = kwargs.get('with_respect_to') #Позволяет сортировать, какую группу техники выводить первой
+        products = []
+        ct_models = ContentType.objects.filter(model__in=args)
+        for ct_model in ct_models:
+            model_products = ct_model.model_class()._base_manager.all().order_by('-id')[:5]
+            #вызываем родительский класс у переданной модели
+            #берём последние 5 штук.
+            products.extend(model_products) #расширяем наш список товаров
+
+        if with_respect_to:
+            ct_model = ContentType.objects.filter(model=with_respect_to)
+            #проверяем ли есть эта модель в найших аргументах.
+            if ct_model.exists():
+                if with_respect_to in args:
+                    #Возвращаем отсортированый список продуктов. Обращаясь к их моделям через атрибут meta.
+                    return sorted(
+                        products, key=lambda x: x.__class__._meta.model_name.startswith(with_respect_to), reverse=True
+                    )
+        return products
+
+
+class LatestProducts:
+
+    objects = LatestProductsManager()
+
 
 class Category(models.Model):
     
