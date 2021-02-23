@@ -19,7 +19,8 @@ class LatestProductsManager:
     #функция достающая весь список товаров, который надо отобразить
     @staticmethod
     def get_products_for_main_page(*args, **kwargs):
-        with_respect_to = kwargs.get('with_respect_to') #Позволяет сортировать, какую группу техники выводить первой
+        with_respect_to = kwargs.get('with_respect_to')
+        #Позволяет сортировать, какую группу техники выводить первой
         products = []
         ct_models = ContentType.objects.filter(model__in=args)
         for ct_model in ct_models:
