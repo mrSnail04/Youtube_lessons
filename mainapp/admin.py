@@ -1,14 +1,43 @@
+from PIL import Image
+
 from django.contrib import admin
-from django import forms
-# Register your models here.
+from django.utils.safestring import mark_safe
+
+from django.forms import ModelChoiceField, ModelForm, ValidationError
+
 from .models import *
-from django.forms import ModelChoiceField
+
+
+class NotebookAdminForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['image'].help_text = mark_safe(
+            '<span style = "color:red; font-size:14px">Загружайте изображения с минимальным разрешение {}x{}</span>'.format(
+                *Product.MIN_RESOLUTION
+            )
+        )
+
+    # добавляем ограничения по разрешению изображения для загрузки
+    def clean_image(self):
+        image = self.cleaned_data['image']
+        img = Image.open(image)
+        min_height, min_width = Product.MIN_RESOLUTION
+        max_height, max_width = Product.MAX_RESOLUTION
+        if image.size > Product.MAX_IMAGE_SIZE:
+            raise ValidationError('Размер изображения не должен превышать 3MB!')
+        if img.height < min_height or img.width < min_width:
+            raise ValidationError('Разрешение изображение меньше минимального!')
+        if img.height > max_height or img.width > max_width:
+            raise ValidationError('Разрешение изображение больще минимального!')
+        return image
 
 
 class NotebookAdmin(admin.ModelAdmin):
+    form = NotebookAdminForm
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name =='category':
+        if db_field.name == 'category':
             return ModelChoiceField(Category.objects.filter(slug='notebooks'))
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
