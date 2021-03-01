@@ -1,21 +1,24 @@
-from PIL import Image
+# импорты для ограничений по разрешению изображения
+# from PIL import Image
+# from django.utils.safestring import mark_safe
+# from django.forms import ModelForm, ValidationError
 
 from django.contrib import admin
-from django.utils.safestring import mark_safe
 
 from django.forms import ModelChoiceField, ModelForm, ValidationError
 
 from .models import *
 
+# Класс отвечающий за разрешение и размер файла изображения
 
-class NotebookAdminForm(ModelForm):
+# class NotebookAdminForm(ModelForm):
     # Вариант №2 из models.py
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['image'].help_text = mark_safe(
-            """<span style = "color:red; font-size:14px">При загрузке изображения с разрешением больше максимального {}x{} оно будет обрезано!</span>
-            """.format(*Product.MIN_RESOLUTION)
-        )
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['image'].help_text = mark_safe(
+    #         """<span style = "color:red; font-size:14px">При загрузке изображения с разрешением больше максимального {}x{} оно будет обрезано!</span>
+    #         """.format(*Product.MIN_RESOLUTION)
+    #     )
     # Вариант №1 из models.py
     # добавляем ограничения по разрешению изображения для загрузки
     # def clean_image(self):
@@ -28,12 +31,12 @@ class NotebookAdminForm(ModelForm):
     #     if img.height < min_height or img.width < min_width:
     #         raise ValidationError('Разрешение изображение меньше минимального!')
     #     if img.height > max_height or img.width > max_width:
-    #         raise ValidationError('Разрешение изображение больще минимального!')
+    #         raise ValidationError('Разрешение изображение больше максимального!')
     #     return image
 
 
 class NotebookAdmin(admin.ModelAdmin):
-    form = NotebookAdminForm
+    # form = NotebookAdminForm
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'category':

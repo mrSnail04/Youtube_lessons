@@ -1,13 +1,14 @@
-import sys
-from PIL import Image
+# импорты для ограничений по разрешению изображения
+# import sys
+# from PIL import Image
+# from django.core.files.uploadedfile import InMemoryUploadedFile
+# from io import BytesIO
 
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
-from io import BytesIO
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -21,6 +22,11 @@ User = get_user_model()
 
 
 # 6 Customer
+
+def get_product_url(obj, viewname):
+    ct_model = obj.__class__._meta.model_name
+    return reverse(viewname, kwargs={'ct_model': ct_model, 'slug': obj.slug})
+
 
 
 class MinResolutionErrorException(Exception):
@@ -71,9 +77,9 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    MIN_RESOLUTION = (400, 400)
-    MAX_RESOLUTION = (800, 800)
-    MAX_IMAGE_SIZE = 3145728
+    # MIN_RESOLUTION = (400, 400)
+    # MAX_RESOLUTION = (800, 800)
+    # MAX_IMAGE_SIZE = 3145728
 
     class Meta:
         abstract = True
@@ -89,35 +95,35 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
-        # Вариант №1 предупреждение, что изображение слишком большое или слишком маленькое
-        # image = self.image
-        # img = Image.open(image)
-        # min_height, min_width = self.MIN_RESOLUTION
-        # max_height, max_width = self.MAX_RESOLUTION
-        # if img.height < min_height or img.width < min_width:
-        #     raise MinResolutionErrorException('Разрешение изображение меньше минимального!')
-        # if img.height > max_height or img.width > max_width:
-        #     raise MaxResolutionErrorException('Разрешение изображение больще минимального!')
-
-        # Вариант №2. Обрезаем изображение до 200*200, если загружается изображение больше, чем 800*800
-        image = self.image
-        img = Image.open(image)
-        new_img = img.convert('RGB')
-        # обрезаем изображение
-        resized_new_img = new_img.resize((200, 200), Image.ANTIALIAS)
-        # Преобразуем изображение в байты
-        filestream = BytesIO()
-        # Сохраняем изображение в filestream
-        resized_new_img.save(filestream, 'JPEG', quality=90)
-        # переводим ползунок при чтении объекта на 1
-        filestream.seek(0)
-        name = '{}.{}'.format(*self.image.name.split('.'))
-        print(self.image.name, name)
-        self.image = InMemoryUploadedFile(
-            filestream, 'ImageField', name, 'jpeg/image', sys.getsizeof(filestream), None
-        )
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Вариант №1 предупреждение, что изображение слишком большое или слишком маленькое
+    #     image = self.image
+    #     img = Image.open(image)
+    #     min_height, min_width = self.MIN_RESOLUTION
+    #     max_height, max_width = self.MAX_RESOLUTION
+    #     if img.height < min_height or img.width < min_width:
+    #         raise MinResolutionErrorException('Разрешение изображение меньше минимального!')
+    #     if img.height > max_height or img.width > max_width:
+    #         raise MaxResolutionErrorException('Разрешение изображение больше минимального!')
+    #
+    #     # Вариант №2. Обрезаем изображение до 200*200, если загружается изображение больше, чем 800*800
+    #     # image = self.image
+    #     # img = Image.open(image)
+    #     # new_img = img.convert('RGB')
+    #     # # обрезаем изображение
+    #     # resized_new_img = new_img.resize((200, 200), Image.ANTIALIAS)
+    #     # # Преобразуем изображение в байты
+    #     # filestream = BytesIO()
+    #     # # Сохраняем изображение в filestream
+    #     # resized_new_img.save(filestream, 'JPEG', quality=90)
+    #     # # переводим ползунок при чтении объекта на 1
+    #     # filestream.seek(0)
+    #     # name = '{}.{}'.format(*self.image.name.split('.'))
+    #     # print(self.image.name, name)
+    #     # self.image = InMemoryUploadedFile(
+    #     #     filestream, 'ImageField', name, 'jpeg/image', sys.getsizeof(filestream), None
+    #     # )
+    #     super().save(*args, **kwargs)
 
 
 class CartProduct(models.Model):
@@ -163,6 +169,9 @@ class Notebook(Product):
     def __str__(self):
         return "{}: {}".format(self.category.name, self.title)
 
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
 
 class Smartphone(Product):
     diagonal = models.CharField(max_length=255, verbose_name='Диагональ')
@@ -171,9 +180,12 @@ class Smartphone(Product):
     accum_volume = models.CharField(max_length=255, verbose_name='Объем батареи')
     ram = models.CharField(max_length=255, verbose_name='Оперативная память')
     sd = models.BooleanField(default=True)
-    sd_volume_max = models.CharField(max_length=255, verbose_name='Максимальный объем встраиваемой памяти')
-    main_cam_mp = models.CharField(max_length=255, verbose_name='Главаня камера')
+    sd_volume_max = models.CharField(max_length=255, verbose_name='Максимальный объем SD карты')
+    main_cam_mp = models.CharField(max_length=255, verbose_name='Главная камера')
     frontal_cam_mp = models.CharField(max_length=255, verbose_name='Фронтальная камера')
 
     def __str__(self):
         return "{}: {}".format(self.category.name, self.title)
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
