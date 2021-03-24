@@ -122,6 +122,9 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    def get_model_name(self):
+        return self.__class__.__name__.lower()
+
     # def save(self, *args, **kwargs):
     #     # Вариант №1 предупреждение, что изображение слишком большое или слишком маленькое
     #     image = self.image
@@ -189,6 +192,7 @@ class Cart(models.Model):
             self.final_price = 0
         self.total_products = cart_data['id__count']
         super().save(*args, **kwargs)
+
 
 class Customer(models.Model):
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
