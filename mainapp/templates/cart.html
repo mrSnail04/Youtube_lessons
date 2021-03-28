@@ -33,7 +33,7 @@
         <td>
           <form action="{% url 'change_qty' ct_model=item.content_object.get_model_name slug=item.content_object.slug%}" method="POST">
             {% csrf_token %}
-            <input type="number" class="form-control" name="qty" style="width: 70px" min="1" value="{{ item.qty }}">
+            <input type="number" class="form-control" name="qty" style="width: 70px" min="1" max="100" value="{{ item.qty }}">
             <br>
             <input type="submit" class="btn btn-primary" value="Изменить кол-во">
           </form>
