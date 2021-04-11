@@ -166,6 +166,7 @@ class LoginView(CartMixin, View):
         context = {'form': form, 'cart': self.cart}
         return render(request, 'login.html', context)
 
+
 #Регистрация пользователя
 class RegistrationView(CartMixin, View):
 
