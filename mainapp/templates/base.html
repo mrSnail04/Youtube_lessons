@@ -58,7 +58,7 @@
             {% endif %}
             <li class="nav-item">
                 {% if request.user.is_authenticated%}<span class="navbar text text-light">Здравствуйте,<span class="badge badge-danger">
-                <a style="text-decoration: none; font-size:14px; color: white;" href="#">{{ request.user.username }}</a></span></span>
+                <a style="text-decoration: none; font-size:14px; color: white;" href="{% url 'profile' %}">{{ request.user.username }}</a></span></span>
                 <li>
                     <a class="nav-link text-light" href="{% url 'logout' %}">Выйти</a>
                 </li>{% endif %}
@@ -159,12 +159,8 @@
 </footer>
 
 <!-- Bootstrap core JavaScript -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
-        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
-        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 </body>
 
