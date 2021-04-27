@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'Youtube_lessons.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dj',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'Vfrcbv0405',
         'HOST': '127.0.0.1',
