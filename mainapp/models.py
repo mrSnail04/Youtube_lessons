@@ -19,12 +19,6 @@ class Category(models.Model):
     def get_absolute_url(self):
         return reverse('category_detail', kwargs={'slug': self.slug})
 
-    def gat_fields_for_filter_in_template(self):
-        return ProductFeatures.objects.filter(
-            category=self,
-            use_in_filter=True
-        ).prefetch_related('category').value('feature_key', 'feature_measure', 'feature_name', 'filter_type')
-
 
 class Product(models.Model):
 
@@ -59,9 +53,6 @@ class CartProduct(models.Model):
     def save(self, *args, **kwargs):
         self.final_price = self.qty * self.product.price
         super().save(*args, **kwargs)
-
-
-
 
 
 class Cart(models.Model):

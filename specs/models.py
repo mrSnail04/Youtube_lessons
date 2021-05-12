@@ -57,9 +57,22 @@ class ProductFeatures(models.Model):
     Характеристики товара
     """
 
-    product = models.ForeignKey('mainapp.Product', verbose_name='Товар', on_delete=models.CASCADE)
-    feature = models.ForeignKey(CategoryFeature, verbose_name='Характеристики', on_delete=models.CASCADE)
-    value = models.CharField(max_length=255, verbose_name='Значение')
+    product = models.ForeignKey(
+        'mainapp.Product',
+        verbose_name='Товар',
+        on_delete=models.CASCADE,
+    )
+
+    feature = models.ForeignKey(
+        CategoryFeature,
+        verbose_name='Характеристики',
+        on_delete=models.CASCADE,
+    )
+
+    value = models.CharField(
+        max_length=255,
+        verbose_name='Значение',
+    )
 
     def __str__(self):
         return f'Товар - "{self.product.title}" |' \
